@@ -1,157 +1,125 @@
-# UX Collab
+# UX Collab v2.2.0
 
-Visual-first UI/UX collaboration skill for Claude Code and GitHub Copilot. Take live screenshots of your running app, produce Lucid wireframes or Markdown fallback wireframes, and run a structured design→build→verify loop.
+Visual-first UI/UX collaboration for AI agents — agent-browser + Figma MCP + Lucid. Turn wireframes into production code that matches your design system.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Claude Code](https://img.shields.io/badge/Claude_Code-Compatible-4183C4)](https://claude.ai/code)
-[![GitHub Copilot](https://img.shields.io/badge/GitHub_Copilot-Compatible-4183C4)](https://github.com/features/copilot)
-[![Pi](https://img.shields.io/badge/Pi-Compatible-4183C4)](https://github.com/badlogic/pi-coding-agent)
-[![skills.sh](https://img.shields.io/badge/skills.sh-Compatible-4183C4)](https://skills.sh)
+
+## Quick Start
+
+```bash
+# One-command setup
+npx ux-collab setup
+
+# Verify
+npx ux-collab check
+```
+
+Then tell your agent: **"Let's work on the UI"**
 
 ---
 
-## What It Does
-
-The `ux-collab` skill gives your AI agent a structured visual-first workflow:
+## The 8-Step Loop
 
 ```
-SEE → DISCUSS → DESIGN → BUILD → VERIFY → RECORD
+SEE → DISCUSS → IDEATE → SPECIFY → BUILD → VERIFY → SYNC → RECORD
+        ↑___________↓___________________________↓
+           (Lucid)          (Figma + Code Connect)
 ```
 
-| Step | What happens |
+| Phase | Tool | Purpose |
+|-------|------|---------|
+| **IDEATE** | Lucid | Rough wireframes, layout exploration |
+| **SPECIFY** | Figma MCP | Component specs, token verification, Code Connect |
+| **BUILD** | Local + agent-browser | Implementation with real tokens |
+| **VERIFY** | agent-browser + Figma MCP | Screenshot comparison, token compliance |
+
+---
+
+## Tool Roles
+
+| Tool | When to Use |
 |------|-------------|
-| **SEE** | Navigate to live app, take screenshot, optimize it, snapshot accessibility tree |
-| **DISCUSS** | Synthesize observations into exactly one focused design question |
-| **DESIGN** | Produce a Lucid wireframe (or Markdown fallback when Lucid isn't available) |
-| **BUILD** | Implement only what was agreed — no scope creep |
-| **VERIFY** | Reload, screenshot, compare before/after, run accessibility audit |
-| **RECORD** | Update decisions doc with resolved choices + rationale |
+| **agent-browser** (primary) | Screenshots, browser automation, verification — fast, no MCP setup |
+| **Figma MCP** | Component specs, design tokens, Code Connect integration — production accuracy |
+| **Lucid** | Quick wireframes, ideation, stakeholder communication — layout exploration |
+| **Playwright MCP** | Complex accessibility trees, device emulation — when agent-browser limits |
 
-### Requirements
-
-| Tool | Required | Notes |
-|------|----------|-------|
-| Playwright MCP | ✅ Yes | `mcp_playwright_*` tools |
-| ImageMagick | ✅ Yes | `convert` + `identify` CLI commands |
-| Lucid MCP | ⚡ Optional | Falls back to Markdown wireframes |
-
-Install ImageMagick if needed:
-```bash
-brew install imagemagick          # macOS
-sudo apt install imagemagick      # Ubuntu / Debian
-```
+**Decision**: New rough idea → **Lucid**. Component specs → **Figma**. Everything else → **agent-browser**.
 
 ---
 
 ## Installation
 
-### Pi (skills.sh)
-
+### 1. Pi / skills.sh
 ```bash
 npx skills add kylebrodeur/ux-collab
 ```
 
-### Claude Code Plugin
-
+### 2. Claude Code
 ```bash
 claude plugin marketplace add kylebrodeur/ux-collab
-claude plugin install ux-collab@ux-collab
 ```
 
-Or manually copy the `skills/` folder:
+### 3. GitHub Copilot
+Copy `.github/copilot.json` to your `.github/agents/` folder.
+
+### 4. Manual
 ```bash
 cp -r skills/ux-collab ~/.agents/skills/
-```
-
-### GitHub Copilot Plugin
-
-```bash
-copilot plugin install kylebrodeur/ux-collab
-```
-
-Or copy the agent definition manually to your project:
-```bash
-mkdir -p .github/agents
-cp .github/copilot.json .github/agents/ux-collab.json
-```
-
-### Manual (any agent)
-
-Copy the skill directory to wherever your agent loads skills from:
-```bash
-cp -r skills/ux-collab ~/.agents/skills/
-# or
-cp -r skills/ux-collab .agents/skills/
 ```
 
 ---
 
-## Project Setup
+## Configuration (Optional)
 
-The skill is project-agnostic by default. To configure it for your specific app, drop a `.ux-collab.md` file at your project root:
+Create `.ux-collab.md` in your project root:
 
-```markdown
+```yaml
 # UX Collab — Project Config
+defaultUrl: http://localhost:3000
+decisionsDoc: docs/DESIGN_DECISIONS.md
 
-## Settings
+# Figma (optional)
+figmaFileUrl: https://www.figma.com/design/ABC123/your-file
+codeConnectEnabled: true
 
-- **defaultUrl**: http://localhost:3000
-- **decisionsDoc**: docs/DESIGN_DECISIONS.md
-- **lucidShareEmail**: you@example.com
+# Tokens
+targetFiles:
+  tokens: src/styles/tokens.css
+  components: src/components/
 
-## Brand Tokens
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--brand-primary` | `#0D1B2A` | Headings, primary bg |
-| `--brand-accent` | `#F5A623` | CTAs, highlights |
-
-## Target Files
-
-- `app/_components/` — UI components
-- `app/globals.css` — token layer
-- `tailwind.config.ts` — token wiring
-
-## Open Design Decisions
-
-1. Navigation pattern — sidebar vs. top nav
-2. Mobile layout — stacked vs. scrollable columns
-```
-
-See [skills/ux-collab/docs/project-setup.md](skills/ux-collab/docs/project-setup.md) for the full schema.
-
----
-
-## Usage
-
-Once installed, trigger the skill with natural language:
-
-- *"Let's work on the UI"*
-- *"Show me what the dashboard looks like"*
-- *"Create a wireframe for the onboarding flow"*
-- *"Take a screenshot and review the layout"*
-- *"Before we build this, let's decide on the pattern"*
-
-In pi, you can also invoke it directly:
-```bash
-/skill:ux-collab
+surfaces:
+  - name: Homepage
+    route: /
+  - name: Dashboard
+    route: /dashboard
 ```
 
 ---
 
-## Optimize Screenshot Script
+## Figma MCP Setup (Optional)
 
-The `optimize-screenshot.sh` script is bundled with the skill. It converts raw Playwright PNGs (often 280KB+) to optimized JPEGs under 80KB — keeping context window usage low.
+Add to your `.mcp.json`:
 
-```bash
-# Auto-finds latest screenshot:
-./skills/ux-collab/optimize-screenshot.sh
-
-# Or optimize a specific file:
-./skills/ux-collab/optimize-screenshot.sh /path/to/screenshot.png
+```json
+{
+  "mcpServers": {
+    "figma": {
+      "command": "npx",
+      "args": ["-y", "@figma/mcp"],
+      "env": { "FIGMA_API_KEY": "your-api-key" }
+    }
+  }
+}
 ```
 
-Output is written to `/tmp/playwright-screenshots-optimized/`.
+**MCP Commands** (when available):
+- `mcp_figma_get_variables` — Pull design tokens
+- `mcp_figma_get_code` — Get Code Connect snippets
+- `mcp_figma_get_screenshot` — Capture Figma designs
+- `mcp_figma_search_components` — Find components
+
+See [Figma Integration Guide](skills/ux-collab/figma-integration.md) for full workflow.
 
 ---
 
@@ -159,24 +127,29 @@ Output is written to `/tmp/playwright-screenshots-optimized/`.
 
 ```
 ux-collab/
-├── README.md
-├── package.json
-├── LICENSE
-├── .clinerules                        # Claude Code agent rules
-├── .claude-plugin/
-│   └── plugin.json                    # Claude Code Marketplace manifest
-├── .github/
-│   ├── copilot.json                   # GitHub Copilot agent definition
-│   ├── skill-index.json               # Discovery index (both harnesses)
-│   └── plugin/
-│       └── plugin.json                # Copilot plugin manifest
-└── skills/
-    └── ux-collab/
-        ├── SKILL.md                   # The skill (project-agnostic)
-        ├── optimize-screenshot.sh     # Screenshot optimization helper
-        └── docs/
-            └── project-setup.md      # .ux-collab.md config guide
+├── skills/ux-collab/
+│   ├── SKILL.md              # Main skill documentation
+│   ├── figma-integration.md  # Figma MCP workflow guide
+│   └── optimize-screenshot.sh
+├── scripts/
+│   ├── setup.sh              # One-command install
+│   └── check.sh              # Verify dependencies
+├── CLAUDE.md                 # Project governance template
+├── styles/CLAUDE.md          # Token validation rules
+├── components/CLAUDE.md      # Component requirements
+└── example/                  # Full workflow demo
 ```
+
+---
+
+## Full Workflow Example
+
+See [`example/WORKFLOW.md`](example/WORKFLOW.md) for step-by-step demo:
+1. Wireframe in Lucid
+2. Component specs from Figma via Code Connect
+3. Build with agent-browser
+4. Verify with screenshot comparison
+5. Sync decisions
 
 ---
 
