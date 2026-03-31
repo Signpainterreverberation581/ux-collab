@@ -1,11 +1,11 @@
 ---
 name: ux-collab
-description: "Visual-first UI/UX collaboration loop using Playwright (live app) and Lucid (wireframes). Use when designing or iterating on UI, reviewing the live app visually, creating wireframes, making layout decisions, discussing design before building, or running a design→build→verify loop. Trigger phrases: 'let's work on the UI', 'show me what it looks like', 'create a wireframe', 'design the layout', 'take a screenshot', 'browser view', 'before we build let's decide'."
-compatibility: "Requires: Playwright MCP (mcp_playwright_*), ImageMagick (convert + identify CLI). Optional: Lucid MCP (mcp_lucid_*) — falls back to Markdown wireframes when unavailable."
+description: "Visual-first UI/UX collaboration loop using agent-browser (primary), Playwright MCP (alternative), and Lucid (wireframes). Use when designing or iterating on UI, reviewing the live app visually, creating wireframes, making layout decisions, discussing design before building, or running a design→build→verify loop. Trigger phrases: 'let's work on the UI', 'show me what it looks like', 'create a wireframe', 'design the layout', 'take a screenshot', 'browser view', 'before we build let's decide'."
+compatibility: "Requires: agent-browser (brew/npm) OR Playwright MCP (mcp_playwright_*). ImageMagick (convert + identify CLI) for screenshot optimization. Optional: Lucid MCP (mcp_lucid_*) — falls back to Markdown wireframes when unavailable."
 license: MIT
 metadata:
   author: kylebrodeur
-  version: "2.0"
+  version: "2.1"
 ---
 
 # UX Collaboration Skill
@@ -21,19 +21,51 @@ A structured loop for visual-first UI/UX design and implementation. Works with a
 
 ## Prerequisites — Check Before Starting
 
-At session start, verify the required tools are available:
+At session start, verify the required tools are available. **agent-browser is preferred** — use Playwright MCP only when you need specific features it provides.
 
 ```
-1. Playwright MCP   → try mcp_playwright_browser_navigate { url: "about:blank" }
-                      If it fails: ask user to start Playwright MCP server
-2. ImageMagick      → run: which convert && which identify
-                      If missing: brew install imagemagick  (macOS)
-                                  sudo apt install imagemagick  (Ubuntu/Debian)
-3. Lucid MCP        → optional; if unavailable, use Markdown wireframe fallback (Step 3b)
-4. Dev server       → navigate to target URL; if unreachable, check Session Startup Checklist
+1. agent-browser (PRIMARY)
+   → Check: agent-browser --version
+   → Install if missing:
+      brew install agent-browser          # macOS (fastest)
+      npm install -g agent-browser          # any platform
+   → First run: agent-browser install      # Downloads Chrome for Testing
+
+2. ImageMagick (screenshot optimization)
+   → Check: which convert && which identify
+   → Install:
+      brew install imagemagick             # macOS
+      sudo apt install imagemagick         # Ubuntu/Debian
+
+3. Playwright MCP (ALTERNATIVE — use when needed)
+   → Try: mcp_playwright_browser_navigate { url: "about:blank" }
+   → When to use Playwright instead of agent-browser:
+      * Need full accessibility tree with semantic roles
+      * Complex multi-page interactions with state
+      * Specific viewport/device emulation
+      * MCP ecosystem already configured and working
+   → Fallback: if MCP unavailable, agent-browser handles all core needs
+
+4. Lucid MCP (OPTIONAL — for wireframes)
+   → If unavailable, use Markdown wireframe fallback (Step 3b)
+
+5. Dev server
+   → Navigate to target URL; if unreachable, check Session Startup Checklist
 ```
 
-If Playwright MCP is unavailable, **stop and ask the user to resolve it** — this skill cannot proceed without it.
+---
+
+## Browser Tool Selection Guide
+
+| Use **agent-browser** when | Use **Playwright MCP** when |
+|---|---|
+| Quick visual review | Need full accessibility tree |
+| Token efficiency matters (~200-400 tokens vs 3000-5000) | Complex multi-page interactions |
+| Headless, local development | Specific geolocation/permissions |
+| CI/CD or terminal-only environments | Rich semantic element analysis |
+| Screenshot + basic interaction needed | Viewport resizing via MCP tools |
+
+**Default workflow**: Start with agent-browser. Switch to Playwright MCP if you hit limitations.
 
 ---
 
@@ -43,23 +75,32 @@ If Playwright MCP is unavailable, **stop and ask the user to resolve it** — th
 SEE → DISCUSS → DESIGN → BUILD → VERIFY → RECORD
 ```
 
-### Step 1 — SEE (Playwright)
+### Step 1 — SEE (Browser Snapshot)
 
 Open the live app and establish shared visual context.
 
+**Primary approach (agent-browser):**
+```bash
+agent-browser open <target-url>     # Navigate
+agent-browser snapshot -i             # Get accessibility tree with refs
+agent-browser screenshot page.png     # Full page screenshot
+./optimize-screenshot.sh              # Optimize for chat (<80KB)
+```
+
+**Alternative (Playwright MCP) when richer features needed:**
 ```
 Actions:
-- mcp_playwright_browser_navigate → target URL (check .ux-collab.md for default)
+- mcp_playwright_browser_navigate → target URL
 - mcp_playwright_browser_take_screenshot { type: "png" }
-- ./optimize-screenshot.sh        → prints optimized path, logs size reduction
-- mcp_playwright_browser_snapshot (accessibility tree for element refs + a11y audit)
+- ./optimize-screenshot.sh
+- mcp_playwright_browser_snapshot (full accessibility tree)
 - mcp_playwright_browser_resize for responsive checks:
     mobile:  390×844
     tablet:  768×1024
     desktop: 1440×900
 ```
 
-**Screenshot optimization is mandatory** before attaching any screenshot to chat. Raw Playwright PNGs can exceed 280KB. The optimize script resizes to max 1280px wide and converts to JPEG at 82% quality — output reliably lands under 80KB.
+**Screenshot optimization is mandatory** before attaching any screenshot to chat. Raw screenshots can exceed 280KB. The optimize script resizes to max 1280px wide and converts to JPEG at 82% quality — output reliably lands under 80KB.
 
 ```bash
 # Optimize latest screenshot automatically:
@@ -163,17 +204,33 @@ ls app/ components/ src/ 2>/dev/null | head -20
 - No new dependencies without explicit discussion
 - Keep accessibility semantics: correct heading levels, button vs. link, ARIA labels on interactive elements
 
-### Step 5 — VERIFY (Playwright)
+### Step 5 — VERIFY (Browser Verification)
 
 After every code change, reload and compare.
 
+**Primary approach (agent-browser):**
+```bash
+agent-browser open <target-url>       # Re-open/reload
+agent-browser snapshot -i             # Get updated accessibility tree
+agent-browser screenshot page.png     # Capture after state
+./optimize-screenshot.sh
+```
+
+**For interactions:**
+```bash
+agent-browser scroll down 500         # Scroll to content
+agent-browser click @e3               # Click element by ref
+agent-browser screenshot page.png     # Capture result
+```
+
+**Alternative (Playwright MCP) when richer verification needed:**
 ```
 Actions:
 - mcp_playwright_browser_navigate → reload route
 - mcp_playwright_browser_take_screenshot → capture after state
-- ./optimize-screenshot.sh → optimize before attaching
+- ./optimize-screenshot.sh
 - mcp_playwright_browser_scroll_down / click through key interactions
-- mcp_playwright_browser_evaluate → inspect computed styles if needed
+- mcp_playwright_browser_evaluate → inspect computed styles
 ```
 
 **Visual diff**: Side-by-side compare before/after. Call out:
@@ -183,18 +240,32 @@ Actions:
 
 **Accessibility audit** — run after every significant change:
 ```
-- mcp_playwright_browser_snapshot → review the accessibility tree
-  Check: heading hierarchy (h1→h2→h3), button labels, form labels,
-         ARIA roles on custom components, focus order
-- mcp_playwright_browser_evaluate → getComputedStyle checks for color contrast
+With agent-browser:
+  agent-browser snapshot -i             # Review accessibility tree
+  Look for: heading hierarchy, button labels, form labels, ARIA roles
+
+With Playwright MCP:
+  mcp_playwright_browser_snapshot → full accessibility tree
+  mcp_playwright_browser_evaluate → getComputedStyle for contrast checks
 ```
 
 **Responsive check matrix:**
+```bash
+# agent-browser approach — resize window manually or use device flag
+agent-browser --device "iPhone 12" open <url>
+agent-browser screenshot mobile.png
+
+agent-browser --device "iPad" open <url>
+agent-browser screenshot tablet.png
 ```
-Mobile  390×844  → mcp_playwright_browser_resize { width: 390, height: 844 }
-Tablet  768×1024 → mcp_playwright_browser_resize { width: 768, height: 1024 }
-Desktop 1440×900 → mcp_playwright_browser_resize { width: 1440, height: 900 }
+
+Or with Playwright MCP:
 ```
+mcp_playwright_browser_resize { width: 390, height: 844 }   # Mobile
+mcp_playwright_browser_resize { width: 768, height: 1024 }  # Tablet
+mcp_playwright_browser_resize { width: 1440, height: 900 } # Desktop
+```
+
 Take a screenshot at each breakpoint when layout changes significantly.
 
 ### Step 6 — RECORD
@@ -220,6 +291,15 @@ If no decisions doc exists yet, create one with sections:
 
 For lightweight sessions (no wireframe, no build) — just SEE + DISCUSS:
 
+**With agent-browser:**
+```bash
+agent-browser open <target-url>
+agent-browser screenshot page.png
+./optimize-screenshot.sh
+# State 3–5 observations, ask one focused question
+```
+
+**With Playwright MCP:**
 ```
 1. mcp_playwright_browser_navigate → target URL
 2. mcp_playwright_browser_take_screenshot
@@ -238,15 +318,24 @@ Use this when:
 ## Session Startup Checklist
 
 ```
+[ ] agent-browser installed and working?
+    → Check: agent-browser --version
+    → Install: brew install agent-browser OR npm i -g agent-browser
+    → First run: agent-browser install
+
+[ ] Playwright MCP available (backup/alternative)?
+    → Try: mcp_playwright_browser_navigate to "about:blank"
+    → If agent-browser fails, use Playwright MCP
+
 [ ] Dev server running?
-    → Check: mcp_playwright_browser_navigate to target URL
+    → Check: agent-browser open <target-url>
     → Start: run the project's dev task / npm run dev / pnpm dev
 
 [ ] Read .ux-collab.md (if it exists in the project root)
     → Sets: defaultUrl, decisionsDoc, brandTokens, targetFiles, surfaces
 
 [ ] Take baseline screenshot of target surface
-    → mcp_playwright_browser_take_screenshot + ./optimize-screenshot.sh
+    → agent-browser open <url> + agent-browser screenshot + ./optimize-screenshot.sh
 
 [ ] Check decisions doc for any choices made last session
     → path from .ux-collab.md, default: docs/DESIGN_DECISIONS.md
@@ -258,14 +347,48 @@ Use this when:
 
 ## Quick Reference
 
-### Playwright
+### agent-browser (Primary)
+
+```bash
+# Installation
+brew install agent-browser           # macOS
+npm install -g agent-browser         # any platform
+agent-browser install                # Download Chrome (first-time)
+
+# Core workflow
+Navigate:    agent-browser open <url>
+Screenshot:  agent-browser screenshot [path.png] [--full]
+Optimize:    ./optimize-screenshot.sh
+              → /tmp/playwright-screenshots-optimized/*-opt.jpg (<80KB)
+Snapshot:    agent-browser snapshot -i  (accessibility tree with refs)
+Click:       agent-browser click @<ref>  (from snapshot)
+Scroll:      agent-browser scroll <up/down/left/right> [px]
+Close:       agent-browser close
+
+# Responsive testing
+Devices:     agent-browser --device "iPhone 12" open <url>
+             agent-browser --device "iPad" open <url>
+             agent-browser --device "Pixel 5" open <url>
+
+# Sessions (isolated browser instances)
+Create:      agent-browser --session <name> open <url>
+List:        agent-browser session list
+Close all:   agent-browser close --all
+
+# Configuration
+Config file: agent-browser.json (project root or ~/.agent-browser/config.json)
+Headed mode: agent-browser open <url> --headed
+State saving: agent-browser --profile ./profile open <url>
+```
+
+### Playwright MCP (Alternative)
 
 ```
 Navigate:    mcp_playwright_browser_navigate { url }
 Screenshot:  mcp_playwright_browser_take_screenshot { type: "png" }
 Optimize:    ./optimize-screenshot.sh
-             → /tmp/playwright-screenshots-optimized/*-opt.jpg (<80KB)
-Snapshot:    mcp_playwright_browser_snapshot  (a11y tree + element refs)
+              → /tmp/playwright-screenshots-optimized/*-opt.jpg (<80KB)
+Snapshot:    mcp_playwright_browser_snapshot  (full a11y tree + element refs)
 Click:       mcp_playwright_browser_click { ref }
 Resize:      mcp_playwright_browser_resize { width, height }
 Evaluate:    mcp_playwright_browser_evaluate { script }
@@ -278,7 +401,8 @@ Scroll:      mcp_playwright_browser_mouse_wheel { deltaY }
 Create:      mcp_lucid_lucid_create_diagram_from_specification { title, description, ... }
 Share:       mcp_lucid_lucid_create_document_share_link { documentId, email }
 Export:      mcp_lucid_lucid_export_image { documentId }
-Preview:     mcp_playwright_browser_navigate { url: lucidShareUrl }
+Preview:     agent-browser open <lucidShareUrl>
+              OR: mcp_playwright_browser_navigate { url: lucidShareUrl }
 ```
 
 ---
