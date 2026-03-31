@@ -11,6 +11,9 @@
   {"query": "can you open the app and tell me what you see", "should_trigger": true},
   {"query": "let's do a design review before we build the results page", "should_trigger": true},
   {"query": "screenshot and review the mobile layout", "should_trigger": true},
+  {"query": "use agent-browser to take a screenshot", "should_trigger": true},
+  {"query": "open the app with agent-browser", "should_trigger": true},
+  {"query": "run ux-collab with agent-browser", "should_trigger": true},
 
   {"query": "write a unit test for this React component", "should_trigger": false},
   {"query": "fix this TypeScript error in my service file", "should_trigger": false},

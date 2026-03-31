@@ -7,6 +7,9 @@
   {"query": "ImageMagick is missing, how do I install it", "should_trigger": true},
   {"query": "fix the ux-collab setup", "should_trigger": true},
   {"query": "something's broken with ux-collab, screenshots aren't working", "should_trigger": true},
+  {"query": "install agent-browser", "should_trigger": true},
+  {"query": "set up agent-browser", "should_trigger": true},
+  {"query": "agent-browser is not found", "should_trigger": true},
 
   {"query": "let's work on the UI", "should_trigger": false},
   {"query": "take a screenshot of the homepage", "should_trigger": false},
