@@ -24,6 +24,12 @@ A structured loop for visual-first UI/UX design and implementation. Works with a
 
 At session start, verify the required tools are available. **agent-browser is preferred** — use Playwright MCP only when you need specific features it provides.
 
+**Quick check via npm (if ux-collab is installed as a package):**
+```bash
+npm run check    # Verifies agent-browser, ImageMagick, MCP configs
+```
+
+**Manual checks:**
 ```
 1. agent-browser (PRIMARY)
    → Check: agent-browser --version

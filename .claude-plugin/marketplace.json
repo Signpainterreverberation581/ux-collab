@@ -1,0 +1,24 @@
+{
+  "name": "ux-collab",
+  "owner": {
+    "name": "kylebrodeur"
+  },
+  "plugins": [
+    {
+      "name": "ux-collab",
+      "source": {
+        "source": "github",
+        "repo": "kylebrodeur/ux-collab"
+      },
+      "description": "Visual-first UI/UX collaboration workflow using agent-browser, Playwright MCP, Figma MCP, and Lucid wireframes",
+      "version": "2.2.0",
+      "author": {
+        "name": "kylebrodeur"
+      },
+      "repository": "https://github.com/kylebrodeur/ux-collab",
+      "homepage": "https://github.com/kylebrodeur/ux-collab",
+      "license": "MIT",
+      "keywords": ["ux", "ui", "design", "agent-browser", "playwright", "figma", "code-connect", "lucid", "wireframe", "screenshot", "visual", "collaboration", "design-system"]
+    }
+  ]
+}

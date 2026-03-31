@@ -17,20 +17,22 @@ Diagnose and fix missing ux-collab dependencies in one guided session.
 Find the package root and run the check script:
 
 ```bash
-# From the package directory:
+# From the cloned repo / package directory:
+npm run check      # or: pnpm run check
+# or:
 bash scripts/check.sh
-
-# Or if installed globally / via npx:
-npx ux-collab check
 ```
 
 Read the output carefully. Each line is either ✔ (pass), ⚠ (warning/optional), or ✘ (required — must fix).
 
 ## Step 2 — Auto-fix what can be automated
 
-Run setup.sh — it handles ImageMagick installation, agent-browser installation, and creates `.ux-collab.md` if missing:
+Run the setup script — it handles ImageMagick installation, agent-browser installation, and creates `.ux-collab.md` if missing:
 
 ```bash
+# From the cloned repo / package directory:
+npm run setup      # or: pnpm run setup
+# or:
 bash scripts/setup.sh
 ```
 
@@ -100,7 +102,7 @@ Playwright MCP is **optional** — agent-browser covers all core ux-collab needs
 claude plugin install playwright@claude-plugins-official
 ```
 
-Then restart Claude Code. Re-run `bash scripts/check.sh` to confirm.
+Then restart Claude Code. Re-run `npm run check` (or `bash scripts/check.sh`) to confirm.
 
 ### If MCP servers start but hang or show pnpm path errors
 
@@ -111,7 +113,7 @@ npx @kylebrodeur/mcp-wsl-setup   # WSL (fixes fnm/pnpm paths in VS Code mcp.json
 npx @kylebrodeur/mcp-mac-setup   # macOS (fixes pnpm paths)
 ```
 
-Re-run `bash scripts/check.sh` after.
+Re-run `npm run check` (or `bash scripts/check.sh`) after.
 
 ### Any harness (manual MCP server via `.mcp.json`)
 
@@ -128,7 +130,7 @@ Create or edit `.mcp.json` in the project root:
 }
 ```
 
-Restart the agent session. Re-run `bash scripts/check.sh` to confirm.
+Restart the agent session. Re-run `npm run check` (or `bash scripts/check.sh`) to confirm.
 
 ## Step 5 — Fix Lucid MCP (optional — skip if not needed)
 
@@ -146,22 +148,22 @@ claude plugin install lucid@claude-plugins-official
 
 ## Step 6 — Create project config (if warned)
 
-If `check.sh` warned that `.ux-collab.md` is missing, create one:
+If `check` warned that `.ux-collab.md` is missing, create one by copying the template from the repo or create manually:
 
 ```bash
-node cli.cjs init
-# or
-npx ux-collab init
+# From the cloned repo:
+cp .ux-collab.md.example .ux-collab.md
+# Then edit `.ux-collab.md` to set:
+# - `defaultUrl` — your dev server URL
+# - `lucidShareEmail` — your Lucid account email
+# - Brand tokens, target files, and surfaces
 ```
-
-Then edit `.ux-collab.md` to set:
-- `defaultUrl` — your dev server URL
-- `lucidShareEmail` — your Lucid account email
-- Brand tokens, target files, and surfaces (see [docs/project-setup.md](../ux-collab/docs/project-setup.md))
 
 ## Step 7 — Final verification
 
 ```bash
+npm run check      # or: pnpm run check
+# or:
 bash scripts/check.sh
 ```
 

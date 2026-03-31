@@ -7,11 +7,14 @@ Visual-first UI/UX collaboration for AI agents — agent-browser + Figma MCP + L
 ## Quick Start
 
 ```bash
+# Install dependencies
+npm install
+
 # One-command setup
-npx ux-collab setup
+npm run setup
 
 # Verify
-npx ux-collab check
+npm run check
 ```
 
 Then tell your agent: **"Let's work on the UI"**
@@ -57,7 +60,11 @@ npx skills add kylebrodeur/ux-collab
 
 ### 2. Claude Code
 ```bash
+# Add marketplace
 claude plugin marketplace add kylebrodeur/ux-collab
+
+# Install plugin
+claude plugin install ux-collab@ux-collab
 ```
 
 ### 3. GitHub Copilot
