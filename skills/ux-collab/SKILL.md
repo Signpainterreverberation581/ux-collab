@@ -1,11 +1,11 @@
 ---
 name: ux-collab
-description: "Visual-first UI/UX collaboration loop using agent-browser (primary), Playwright MCP (alternative), and Lucid (wireframes). Use when designing or iterating on UI, reviewing the live app visually, creating wireframes, making layout decisions, discussing design before building, or running a design→build→verify loop. Trigger phrases: 'let's work on the UI', 'show me what it looks like', 'create a wireframe', 'design the layout', 'take a screenshot', 'browser view', 'before we build let's decide'."
-compatibility: "Requires: agent-browser (brew/npm) OR Playwright MCP (mcp_playwright_*). ImageMagick (convert + identify CLI) for screenshot optimization. Optional: Lucid MCP (mcp_lucid_*) — falls back to Markdown wireframes when unavailable."
+description: "Visual-first UI/UX collaboration loop using agent-browser (primary), Playwright MCP (alternative), Figma MCP (design system/specs), and Lucid (wireframes). Use when designing or iterating on UI, reviewing the live app visually, creating wireframes, making layout decisions, discussing design before building, or running a design→build→verify loop. Trigger phrases: 'let's work on the UI', 'show me what it looks like', 'create a wireframe', 'design the layout', 'take a screenshot', 'browser view', 'before we build let's decide'."
+compatibility: "Requires: agent-browser (brew/npm) OR Playwright MCP (mcp_playwright_*). ImageMagick for screenshot optimization. Optional: Lucid MCP (wireframes), Figma MCP (design tokens/component specs)."
 license: MIT
 metadata:
   author: kylebrodeur
-  version: "2.1"
+  version: "2.2"
 ---
 
 # UX Collaboration Skill
@@ -18,6 +18,7 @@ A structured loop for visual-first UI/UX design and implementation. Works with a
 - When the user wants to see the live app, discuss layout, or compare before/after states
 - When a design decision is unresolved and a wireframe would help
 - When iterating on an existing surface
+- When building from Figma designs with Code Connect
 
 ## Prerequisites — Check Before Starting
 
@@ -42,14 +43,21 @@ At session start, verify the required tools are available. **agent-browser is pr
    → When to use Playwright instead of agent-browser:
       * Need full accessibility tree with semantic roles
       * Complex multi-page interactions with state
-      * Specific viewport/device emulation
+      * Specific viewport/device emulation beyond agent-browser devices
       * MCP ecosystem already configured and working
    → Fallback: if MCP unavailable, agent-browser handles all core needs
 
-4. Lucid MCP (OPTIONAL — for wireframes)
-   → If unavailable, use Markdown wireframe fallback (Step 3b)
+4. Figma MCP (OPTIONAL — for design system alignment)
+   → For pulling tokens, verifying components, Code Connect integration
+   → Requires Figma Pro + API key
+   → Use when: design system is in Figma with Code Connect
 
-5. Dev server
+5. Lucid MCP (OPTIONAL — for wireframes)
+   → For ideation, simple wireframes, explanations
+   → Falls back to Markdown wireframes when unavailable
+   → See "Lucid vs Figma" section for when to use each
+
+6. Dev server
    → Navigate to target URL; if unreachable, check Session Startup Checklist
 ```
 
@@ -59,23 +67,53 @@ At session start, verify the required tools are available. **agent-browser is pr
 
 | Use **agent-browser** when | Use **Playwright MCP** when |
 |---|---|
-| Quick visual review | Need full accessibility tree |
-| Token efficiency matters (~200-400 tokens vs 3000-5000) | Complex multi-page interactions |
+| Quick visual review | Need full accessibility tree with semantic roles |
+| Token efficiency matters (~200-400 tokens vs 3000-5000) | Complex multi-page interactions with state |
 | Headless, local development | Specific geolocation/permissions |
 | CI/CD or terminal-only environments | Rich semantic element analysis |
-| Screenshot + basic interaction needed | Viewport resizing via MCP tools |
+| Screenshot + basic interaction needed | Viewport resizing via dynamic MCP tools |
 
 **Default workflow**: Start with agent-browser. Switch to Playwright MCP if you hit limitations.
+
+---
+
+## Design Tool Selection: Lucid vs Figma
+
+**Key insight from [Code Connect article](https://uxdesign.cc/designing-with-claude-code-and-codex-cli-building-ai-driven-workflows-powered-by-code-connect-ui-f10c136ec11f):**
+
+| Tool | Purpose | When to Use |
+|------|---------|-------------|
+| **Lucid** | Ideation, simple wireframes, explanations | Early concept exploration, layout discussions, stakeholder communication, rough "what if" scenarios |
+| **Figma** | Fine-tuning, design systems, component tracking | Component specification, token verification, design-code alignment, production-grade specs, Code Connect integration |
+
+**Decision tree:**
+- Is this a new rough idea where layout is uncertain? → **Lucid**
+- Are we specifying component behavior, tokens, or states? → **Figma**
+- Building from an existing design system? → **Figma MCP** (pull tokens/components)
+- Need to verify implementation matches design? → **Figma MCP** (compare screenshot)
 
 ---
 
 ## The Loop
 
 ```
-SEE → DISCUSS → DESIGN → BUILD → VERIFY → RECORD
+SEE → DISCUSS → IDEATE → SPECIFY → BUILD → VERIFY → SYNC → RECORD
+        ↑___________↓___________________________↓
+           (Lucid)          (Figma + Code Connect)
 ```
 
-### Step 1 — SEE (Browser Snapshot)
+1. **SEE** — Screenshot live app with agent-browser or Playwright MCP
+2. **DISCUSS** — Identify design questions and constraints
+3. **IDEATE** — Rough wireframes in Lucid (or Markdown) for layout exploration
+4. **SPECIFY** — Figma MCP + Code Connect for component/token specification
+5. **BUILD** — Implement with real components and tokens
+6. **VERIFY** — agent-browser + Figma MCP comparison for token compliance
+7. **SYNC** — Update Figma with implementation notes (optional, future)
+8. **RECORD** — Document decisions in design decisions file
+
+---
+
+## Step 1 — SEE (Browser Snapshot)
 
 Open the live app and establish shared visual context.
 
@@ -117,7 +155,9 @@ After capturing, state your observations in **3–5 bullet points**:
 - Spacing and alignment issues
 - Anything that looks broken or unfinished
 
-### Step 2 — DISCUSS
+---
+
+## Step 2 — DISCUSS
 
 Synthesize observations into design questions. Ask **exactly one focused question** at a time.
 
@@ -133,32 +173,46 @@ Synthesize observations into design questions. Ask **exactly one focused questio
 
 Check the project decisions doc (from `.ux-collab.md` → `decisionsDoc`) before asking — don't re-litigate resolved decisions.
 
-### Step 3a — DESIGN (Lucid) — When Lucid MCP is available
+---
 
-When structural or layout decisions need visual communication, produce a Lucid wireframe.
+## Step 3 — IDEATE (Lucid or Markdown Wireframes)
+
+**Purpose:** Rough layout exploration, early concept communication
+
+**Use Lucid when:**
+- Exploring multiple layout options
+- Communicating rough ideas to stakeholders
+- Creating quick "what if" scenarios
+- Layout structure is still uncertain
+
+**Use Markdown when:**
+- Lucid MCP is unavailable
+- Quick textual representation suffices
+- Developer handoff is immediate
+
+### With Lucid MCP:
 
 ```
 Actions:
 - mcp_lucid_lucid_create_diagram_from_specification → generate wireframe
-- mcp_lucid_lucid_create_document_share_link → share (get email from .ux-collab.md or ask)
+- mcp_lucid_lucid_create_document_share_link → share
 - mcp_lucid_lucid_export_image → pull image back into conversation
-- mcp_playwright_browser_navigate → open diagram URL for review
+- agent-browser open <lucidShareUrl> → preview
 ```
 
 **Wireframe conventions:**
-- Label everything: component name, content type, interaction state (empty/filled/error/disabled)
-- Show the dominant layout grid (column count, gaps, max-width)
-- Include mobile and desktop artboards when layout changes significantly across breakpoints
-- Use brand token names in labels (e.g., `bg-brand-navy`, `text-brand-gold`) — check `.ux-collab.md` for project tokens
-- Mark unresolved decisions as `[?]` in the diagram
+- Label sections (Header, Hero, Sidebar, Main Content)
+- Show grid/structure but not pixel-perfect spacing
+- Mark content types (H1, Button, Card Grid)
+- Indicate responsive breakpoints if layout changes
+- Mark open decisions with `[?]`
 
-**When to wireframe vs. just describe:**
-- **Wireframe**: new surface, layout restructure, before/after comparison, multiple competing options
-- **Describe**: minor spacing/color tweaks, copy changes, single-component fixes
+**When NOT to use Lucid:**
+- Component specification (use Figma)
+- Token verification (use Figma)
+- Final design approval (use Figma)
 
-### Step 3b — DESIGN (Markdown Fallback) — When Lucid MCP is unavailable
-
-Produce a structured Markdown wireframe directly in chat:
+### Markdown Fallback:
 
 ```markdown
 ## Wireframe: [Surface Name] — [Viewport]
@@ -182,11 +236,67 @@ States needed: empty, loading, error, filled
 Open decisions: [?] sidebar collapse behavior on mobile
 ```
 
-Label open decisions with `[?]`. Get explicit agreement before moving to BUILD.
+---
 
-### Step 4 — BUILD
+## Step 4 — SPECIFY (Figma MCP + Code Connect)
 
-Implement only what was agreed in Steps 2–3. No scope creep.
+**Purpose:** Component specification, token verification, design-code alignment
+
+**Prerequisites:**
+- Figma Pro account
+- Figma MCP Server configured
+- Code Connect set up in Figma (components linked to GitHub)
+
+### When to Use Figma MCP:
+
+1. **Before BUILD:** Pull tokens and component specs
+   ```
+   - mcp_figma_get_variables → Extract design tokens
+   - mcp_figma_get_code → Pull Code Connect snippets
+   - mcp_figma_get_component_props → See available variants
+   - Verify all tokens exist in local CSS
+   ```
+
+2. **During BUILD:** Reference component specs
+   ```
+   - mcp_figma_get_screenshot → See exact design
+   - mcp_figma_get_design_tokens → Verify token names match
+   ```
+
+3. **After BUILD:** Verify implementation
+   ```
+   - mcp_figma_get_screenshot → Capture design
+   - Compare to agent-browser screenshot
+   - Verify tokens match implementation
+   ```
+
+### Component State Matrix (Document in .ux-collab.md):
+
+Document expected component states for verification:
+
+```markdown
+| Element | Property | Default | Hover | Active | Focus | Disabled |
+|---------|----------|---------|-------|--------|-------|----------|
+| Button (Primary) | Background | --bg-primary | --bg-primary-hover | --bg-primary-active | --bg-primary | --bg-disabled |
+| Button (Primary) | Border | none | none | none | --border-focus | none |
+| Button (Primary) | Text Color | --text-on-primary | --text-on-primary | --text-on-primary | --text-on-primary | --text-disabled |
+```
+
+### MCP Instructions per Component:
+
+Reference these from Code Connect UI to guide AI behavior:
+
+- "Always use 'primary' variant for main CTAs, 'secondary' for supporting actions"
+- "Text should be sentence case (not uppercase)"
+- "Icons should use --icon-size-md (20px) for default size"
+- "Disabled state uses reduced opacity (0.5), not grey background"
+- "Transitions should use --ease-standard (--duration-fast: 150ms)"
+
+---
+
+## Step 5 — BUILD
+
+Implement only what was agreed in Steps 2–4. No scope creep.
 
 **Project-specific target files are in `.ux-collab.md`** — read it before touching any files.
 
@@ -198,60 +308,58 @@ find . -name "tailwind.config*" -not -path "*/node_modules/*" | head -3
 ls app/ components/ src/ 2>/dev/null | head -20
 ```
 
-**Universal code rules:**
-- All colors via design tokens only — no inline hex values
-- Use the project's existing component system (shadcn/ui, Radix, MUI, etc.) — extend, don't replace
-- No new dependencies without explicit discussion
-- Keep accessibility semantics: correct heading levels, button vs. link, ARIA labels on interactive elements
+### Universal Code Rules:
+- **All colors via design tokens only** — no inline hex values
+- **Use project's existing component system** (shadcn/ui, Radix, MUI, etc.) — extend, don't replace
+- **No new dependencies** without explicit discussion
+- **Accessibility semantics:** correct heading levels, button vs. link, ARIA labels on interactive elements
+- **Match Figma tokens** via mcp_figma_get_design_tokens when available
 
-### Step 5 — VERIFY (Browser Verification)
+### Design System Check (if Figma MCP available):
+```
+Before coding:
+[ ] mcp_figma_search_components → Find matching component
+[ ] mcp_figma_get_code → Pull Code Connect snippet
+[ ] Verify component exists in local codebase
+[ ] Check token names match local CSS
 
-After every code change, reload and compare.
+If component missing or tokens mismatch:
+→ Flag for design system update
+→ Document in decisions file
+```
 
-**Primary approach (agent-browser):**
+---
+
+## Step 6 — VERIFY (Browser + Figma Comparison)
+
+After every code change, reload and verify implementation matches intent.
+
+**Screenshot comparison:**
 ```bash
-agent-browser open <target-url>       # Re-open/reload
-agent-browser snapshot -i             # Get updated accessibility tree
-agent-browser screenshot page.png     # Capture after state
-./optimize-screenshot.sh
+agent-browser open <target-url>
+agent-browser screenshot implementation.png
+mcp_figma_get_screenshot → design.png
+# Compare side-by-side
 ```
 
-**For interactions:**
+**Token compliance check:**
+```
+1. mcp_figma_get_design_tokens → Extract expected tokens
+2. Check computed styles in browser:
+   - agent-browser open <url>
+   - agent-browser click @element-ref
+   - agent-browser evaluate → getComputedStyle(element)
+3. Verify CSS properties match token values
+4. Document any discrepancies
+```
+
+**Visual diff callouts:**
+- ✅ What matches design intent
+- ⚠️ What's off but acceptable
+- ❌ What needs fixing before RECORD
+
+**Responsive verification:**
 ```bash
-agent-browser scroll down 500         # Scroll to content
-agent-browser click @e3               # Click element by ref
-agent-browser screenshot page.png     # Capture result
-```
-
-**Alternative (Playwright MCP) when richer verification needed:**
-```
-Actions:
-- mcp_playwright_browser_navigate → reload route
-- mcp_playwright_browser_take_screenshot → capture after state
-- ./optimize-screenshot.sh
-- mcp_playwright_browser_scroll_down / click through key interactions
-- mcp_playwright_browser_evaluate → inspect computed styles
-```
-
-**Visual diff**: Side-by-side compare before/after. Call out:
-- ✅ What changed and matches intent
-- ⚠️ What's still off
-- ❌ What regressed
-
-**Accessibility audit** — run after every significant change:
-```
-With agent-browser:
-  agent-browser snapshot -i             # Review accessibility tree
-  Look for: heading hierarchy, button labels, form labels, ARIA roles
-
-With Playwright MCP:
-  mcp_playwright_browser_snapshot → full accessibility tree
-  mcp_playwright_browser_evaluate → getComputedStyle for contrast checks
-```
-
-**Responsive check matrix:**
-```bash
-# agent-browser approach — resize window manually or use device flag
 agent-browser --device "iPhone 12" open <url>
 agent-browser screenshot mobile.png
 
@@ -259,59 +367,63 @@ agent-browser --device "iPad" open <url>
 agent-browser screenshot tablet.png
 ```
 
-Or with Playwright MCP:
+---
+
+## Step 7 — SYNC (Future: Code-to-Figma)
+
+When Figma releases code-to-design features:
+
 ```
-mcp_playwright_browser_resize { width: 390, height: 844 }   # Mobile
-mcp_playwright_browser_resize { width: 768, height: 1024 }  # Tablet
-mcp_playwright_browser_resize { width: 1440, height: 900 } # Desktop
+Proposed workflow:
+1. Implement in code using verified tokens
+2. AI detects components in implementation
+3. Push component instances back to Figma
+4. Auto-generate design specs from code
+5. Update Design System documentation
 ```
 
-Take a screenshot at each breakpoint when layout changes significantly.
+For now: Document implementation notes in decisions file.
 
-### Step 6 — RECORD
+---
+
+## Step 8 — RECORD
 
 Update the project decisions doc (path in `.ux-collab.md` → `decisionsDoc`, default: `docs/DESIGN_DECISIONS.md`).
 
-Move resolved decisions from "Open" to "Decided":
-
+**Structure:**
 ```markdown
+## Open Decisions
+- [?] Mobile sidebar behavior still TBD
+
+## Decided
 **[Decision name]** — [chosen option].
 Rationale: [one sentence why].
+Implementation notes: [link to PR or file]
+Figma reference: [link to Figma frame]
 Date: [YYYY-MM].
+
+## Design Principles
+- Always use semantic tokens, never primitives directly in components
+- Button text is always sentence case
 ```
 
-If no decisions doc exists yet, create one with sections:
-- `## Open Decisions`
-- `## Decided`
-- `## Design Principles` (for persistent rules that came out of discussion)
+**If Figma MCP was used during session:**
+- Link to Figma frames used
+- Note any token mismatches discovered
+- Document Code Connect status for new components
 
 ---
 
 ## Minimal Mode — Quick Visual Review
 
-For lightweight sessions (no wireframe, no build) — just SEE + DISCUSS:
+For lightweight sessions (no wireframe, no Figma, quick check):
 
-**With agent-browser:**
 ```bash
 agent-browser open <target-url>
 agent-browser screenshot page.png
 ./optimize-screenshot.sh
 # State 3–5 observations, ask one focused question
 ```
-
-**With Playwright MCP:**
-```
-1. mcp_playwright_browser_navigate → target URL
-2. mcp_playwright_browser_take_screenshot
-3. ./optimize-screenshot.sh
-4. State 3–5 observations
-5. Ask one focused question
-```
-
-Use this when:
-- User wants a fast gut-check before a full session
-- Verifying a single deployed fix
-- Getting visual context before planning work
 
 ---
 
@@ -327,20 +439,26 @@ Use this when:
     → Try: mcp_playwright_browser_navigate to "about:blank"
     → If agent-browser fails, use Playwright MCP
 
+[ ] Figma MCP configured (optional)?
+    → Check: .mcp.json for figma server
+    → Verify FIGMA_API_KEY is set
+    → Only needed for design token workflows
+
 [ ] Dev server running?
     → Check: agent-browser open <target-url>
-    → Start: run the project's dev task / npm run dev / pnpm dev
+    → Start: run the project's dev task
 
-[ ] Read .ux-collab.md (if it exists in the project root)
-    → Sets: defaultUrl, decisionsDoc, brandTokens, targetFiles, surfaces
+[ ] Read .ux-collab.md (if present)
+    → Sets: defaultUrl, decisionsDoc, brandTokens, targetFiles, surfaces, figmaFileUrl
 
-[ ] Take baseline screenshot of target surface
+[ ] Check if this is "IDEATE" or "SPECIFY" phase
+    → Rough layout? IDEATE (Lucid)
+    → Component specs? SPECIFY (Figma)
+
+[ ] Take baseline screenshot
     → agent-browser open <url> + agent-browser screenshot + ./optimize-screenshot.sh
 
-[ ] Check decisions doc for any choices made last session
-    → path from .ux-collab.md, default: docs/DESIGN_DECISIONS.md
-
-[ ] Confirm scope: which surface and which decision is in scope today
+[ ] Confirm scope: which surface, which phase, which tools needed
 ```
 
 ---
@@ -359,10 +477,10 @@ agent-browser install                # Download Chrome (first-time)
 Navigate:    agent-browser open <url>
 Screenshot:  agent-browser screenshot [path.png] [--full]
 Optimize:    ./optimize-screenshot.sh
-              → /tmp/playwright-screenshots-optimized/*-opt.jpg (<80KB)
 Snapshot:    agent-browser snapshot -i  (accessibility tree with refs)
 Click:       agent-browser click @<ref>  (from snapshot)
 Scroll:      agent-browser scroll <up/down/left/right> [px]
+Evaluate:    agent-browser eval "document.querySelector('...').style"
 Close:       agent-browser close
 
 # Responsive testing
@@ -370,15 +488,8 @@ Devices:     agent-browser --device "iPhone 12" open <url>
              agent-browser --device "iPad" open <url>
              agent-browser --device "Pixel 5" open <url>
 
-# Sessions (isolated browser instances)
-Create:      agent-browser --session <name> open <url>
-List:        agent-browser session list
-Close all:   agent-browser close --all
-
-# Configuration
-Config file: agent-browser.json (project root or ~/.agent-browser/config.json)
-Headed mode: agent-browser open <url> --headed
-State saving: agent-browser --profile ./profile open <url>
+# Configuration file
+Config:      agent-browser.json (project root)
 ```
 
 ### Playwright MCP (Alternative)
@@ -386,31 +497,83 @@ State saving: agent-browser --profile ./profile open <url>
 ```
 Navigate:    mcp_playwright_browser_navigate { url }
 Screenshot:  mcp_playwright_browser_take_screenshot { type: "png" }
-Optimize:    ./optimize-screenshot.sh
-              → /tmp/playwright-screenshots-optimized/*-opt.jpg (<80KB)
-Snapshot:    mcp_playwright_browser_snapshot  (full a11y tree + element refs)
+Snapshot:    mcp_playwright_browser_snapshot  (full a11y tree)
 Click:       mcp_playwright_browser_click { ref }
 Resize:      mcp_playwright_browser_resize { width, height }
 Evaluate:    mcp_playwright_browser_evaluate { script }
 Scroll:      mcp_playwright_browser_mouse_wheel { deltaY }
 ```
 
-### Lucid
+### Figma MCP (Design System)
+
+```
+# Token & Component Access
+Get variables:     mcp_figma_get_variables { fileKey, variableId }
+Search components: mcp_figma_search_components { fileKey, query }
+Get component:     mcp_figma_get_component_props { fileKey, componentId }
+Get code snippet:  mcp_figma_get_code { fileKey, nodeId }
+Get screenshot:    mcp_figma_get_screenshot { fileKey, nodeId }
+
+# Design Verification
+Get design tokens: mcp_figma_get_design_tokens { fileKey, nodeId }
+Get metadata:      mcp_figma_get_component_metadata { fileKey, componentId }
+```
+
+### Lucid (Wireframes)
 
 ```
 Create:      mcp_lucid_lucid_create_diagram_from_specification { title, description, ... }
 Share:       mcp_lucid_lucid_create_document_share_link { documentId, email }
 Export:      mcp_lucid_lucid_export_image { documentId }
 Preview:     agent-browser open <lucidShareUrl>
-              OR: mcp_playwright_browser_navigate { url: lucidShareUrl }
 ```
 
 ---
 
-## Project Configuration
+## Updated .ux-collab.md Format
 
-This skill is project-agnostic. Project-specific settings (target URL, brand tokens, file paths, surfaces, open decisions) live in a `.ux-collab.md` file at your project root.
+Add these optional fields for Figma integration:
 
-See [docs/project-setup.md](docs/project-setup.md) for the full `.ux-collab.md` format and examples.
+```markdown
+---
+defaultUrl: http://localhost:3000
+decisionsDoc: docs/DESIGN_DECISIONS.md
 
-**At session start: always check for `.ux-collab.md` and read it if present.**
+# Figma Integration (optional)
+figmaFileUrl: https://www.figma.com/design/ABC123/file-name
+figmaPrototypingBranch: "Design System"
+codeConnectEnabled: true
+
+# Component registry (for validation)
+components:
+  Button: { figmaId: "123:456", codePath: "src/components/Button.tsx" }
+  Card: { figmaId: "123:789", codePath: "src/components/Card.tsx" }
+
+# Token mappings
+brandTokens:
+  colors:
+    primary: --brand-primary
+    secondary: --brand-secondary
+  spacing:
+    sm: --space-4
+    md: --space-8
+    lg: --space-16
+
+targetFiles:
+  tokens: src/styles/tokens.css
+  components: src/components/
+  
+surfaces:
+  - name: Dashboard
+    route: /dashboard
+    components: [Card, Button, DataTable]
+---
+```
+
+---
+
+## See Also
+
+- [Figma Integration Guide](figma-integration.md) — Detailed Figma MCP workflow
+- [Project Setup](docs/project-setup.md) — Full `.ux-collab.md` format
+- Original article: [Designing with Claude Code and Code Connect](https://uxdesign.cc/designing-with-claude-code-and-codex-cli-building-ai-driven-workflows-powered-by-code-connect-ui-f10c136ec11f)

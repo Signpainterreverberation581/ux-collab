@@ -1,14 +1,14 @@
 {
   "name": "ux-collab",
-  "version": "2.1.0",
-  "description": "Visual-first UI/UX collaboration workflow using agent-browser (primary, fast Rust CLI) or Playwright MCP (alternative). Create wireframes with Lucid (or Markdown fallback). Structured SEE → DISCUSS → DESIGN → BUILD → VERIFY → RECORD loop for any web app.",
+  "version": "2.2.0",
+  "description": "Visual-first UI/UX collaboration workflow using agent-browser (primary), Playwright (alternative), Figma MCP (design system/specs), and Lucid (wireframes). Structured SEE → DISCUSS → IDEATE → SPECIFY → BUILD → VERIFY → SYNC → RECORD loop.",
   "author": {
     "name": "kylebrodeur"
   },
   "repository": "https://github.com/kylebrodeur/ux-collab",
   "homepage": "https://github.com/kylebrodeur/ux-collab",
   "license": "MIT",
-  "keywords": ["ux", "ui", "design", "agent-browser", "playwright", "lucid", "wireframe", "screenshot", "visual", "collaboration"],
+  "keywords": ["ux", "ui", "design", "agent-browser", "playwright", "figma", "code-connect", "lucid", "wireframe", "screenshot", "visual", "collaboration", "design-system"],
   "skills": {
     "ux-collab": "./skills/ux-collab",
     "ux-collab-setup": "./skills/ux-collab-setup"

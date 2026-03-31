@@ -1,7 +1,7 @@
 {
   "name": "ux-collab",
-  "version": "2.1.0",
-  "description": "Visual-first UI/UX collaboration agent skill for Claude Code and GitHub Copilot — agent-browser (primary) + Playwright (alternative) + Lucid wireframes + structured design loop",
+  "version": "2.2.0",
+  "description": "Visual-first UI/UX collaboration agent skill for Claude Code and GitHub Copilot — agent-browser (primary) + Playwright (alternative) + Figma MCP (design system) + Lucid wireframes + structured design loop",
   "private": false,
   "type": "module",
   "bin": {
@@ -23,13 +23,16 @@
     "design",
     "agent-browser",
     "playwright",
+    "figma",
+    "code-connect",
     "lucid",
     "wireframe",
     "screenshot",
     "visual",
     "collaboration",
     "skill",
-    "agent-skill"
+    "agent-skill",
+    "design-system"
   ],
   "author": "kylebrodeur",
   "license": "MIT",
