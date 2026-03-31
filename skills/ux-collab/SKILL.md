@@ -81,6 +81,35 @@ npm run check    # Verifies agent-browser, ImageMagick, MCP configs
 
 **Default workflow**: Start with agent-browser. Switch to Playwright MCP if you hit limitations.
 
+## Related Skills
+
+For browser automation, install the official **agent-browser** skill which teaches agents the full API:
+
+```bash
+npx skills add vercel-labs/agent-browser --skill agent-browser
+```
+
+This skill provides:
+- Complete command reference (navigate, snapshot, interact, screenshot)
+- Session and authentication workflows
+- Diffing and evaluation capabilities
+- Best practices for browser automation
+
+**When to use:** Combine with ux-collab when you need deep browser automation beyond basic screenshots — form filling, multi-step workflows, session persistence, or testing.
+
+See all agent-browser skills: https://agent-browser.dev/skills
+
+
+| Use **agent-browser** when | Use **Playwright MCP** when |
+|---|---|
+| Quick visual review | Need full accessibility tree with semantic roles |
+| Token efficiency matters (~200-400 tokens vs 3000-5000) | Complex multi-page interactions with state |
+| Headless, local development | Specific geolocation/permissions |
+| CI/CD or terminal-only environments | Rich semantic element analysis |
+| Screenshot + basic interaction needed | Viewport resizing via dynamic MCP tools |
+
+**Default workflow**: Start with agent-browser. Switch to Playwright MCP if you hit limitations.
+
 ---
 
 ## Design Tool Selection: Lucid vs Figma
