@@ -1,25 +1,25 @@
 {
   "name": "UX Collab",
-  "description": "Visual-first UI/UX collaboration skills using Playwright and Lucid",
+  "description": "Visual-first UI/UX collaboration skills using agent-browser, Figma MCP (design system), and Lucid (wireframes)",
   "skills": [
     {
       "name": "ux-collab",
       "path": "skills/ux-collab/SKILL.md",
-      "description": "Full SEE → DISCUSS → DESIGN → BUILD → VERIFY → RECORD loop for UI/UX sessions",
-      "tags": ["ux", "ui", "design", "playwright", "lucid", "wireframe", "screenshot", "visual"]
+      "description": "Full SEE → DISCUSS → IDEATE → SPECIFY → BUILD → VERIFY → SYNC → RECORD loop for UI/UX sessions with agent-browser (primary), Figma MCP (design system), and Lucid (wireframes)",
+      "tags": ["ux", "ui", "design", "agent-browser", "playwright", "figma", "code-connect", "lucid", "wireframe", "screenshot", "visual", "design-system"]
     },
     {
       "name": "ux-collab-setup",
       "path": "skills/ux-collab-setup/SKILL.md",
-      "description": "Install and configure all ux-collab dependencies — ImageMagick, Playwright MCP, Lucid MCP, project config",
-      "tags": ["setup", "install", "dependencies", "ux-collab"]
+      "description": "Install and configure all ux-collab dependencies — agent-browser, ImageMagick, Playwright MCP (optional), Figma MCP (optional), Lucid MCP (optional), project config",
+      "tags": ["setup", "install", "dependencies", "ux-collab", "agent-browser"]
     }
   ],
   "agents": [
     {
       "name": "ux-collab",
       "path": ".github/copilot.json",
-      "description": "Visual-first UX collaboration agent",
+      "description": "Visual-first UX collaboration agent with design system integration",
       "skills": ["ux-collab"]
     }
   ],
@@ -29,9 +29,13 @@
     "ux",
     "ui",
     "design",
+    "agent-browser",
     "playwright",
+    "figma",
+    "code-connect",
     "lucid",
     "wireframe",
-    "screenshot"
+    "screenshot",
+    "design-system"
   ]
 }
